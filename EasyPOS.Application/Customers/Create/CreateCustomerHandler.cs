@@ -47,9 +47,9 @@ namespace EasyPOS.Application.Customers.Create
                     true
                     );
 
-                await _customerRepository.Add(customer);
+                _customerRepository.Add(customer);
 
-                await _unitOfWork.SaveChangeAsync(cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
 
                 return Unit.Value;
             }

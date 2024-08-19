@@ -14,9 +14,9 @@ namespace EasyPOS.Infrastructure.Persistence.Repository
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task Add(Customer customer)
+        public void Add(Customer customer)
         {
-            await _context.Customers.AddAsync(customer);
+             _context.Customers.Add(customer);
         }
 
         public async Task<Customer?> GetByIdAsync(CustomerId id)

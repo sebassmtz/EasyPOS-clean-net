@@ -41,10 +41,5 @@ namespace EasyPOS.Infrastructure.Persistence
 
             return result;
         }
-
-        public Task<int> SaveChangeAsync(CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

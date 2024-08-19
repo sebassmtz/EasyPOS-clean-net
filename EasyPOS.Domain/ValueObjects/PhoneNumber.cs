@@ -5,8 +5,8 @@ namespace EasyPOS.Domain.ValueObjects
 {
     public partial record PhoneNumber
     {
-        private const int DefaultLenght = 10;
-        private const string Pattern = @"^(?:-*\d-*){9}$";
+        private const int DefaultLenght = 9;
+        private const string Pattern = @"^(?:-*\d-*){8}$";
 
         public string Value { get; init; }
 
