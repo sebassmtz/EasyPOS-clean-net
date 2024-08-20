@@ -1,4 +1,9 @@
 ﻿using EasyPOS.Application.Customers.Create;
+using EasyPOS.Application.Customers.Delete;
+using EasyPOS.Application.Customers.GetAll;
+using EasyPOS.Application.Customers.GetById;
+using EasyPOS.Application.Customers.Update;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,16 +25,24 @@ namespace Web.API.Controllers
 
         // GET: api/<CustomersController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> GetAll()
         {
-            return new string[] { "value1", "value2" };
+            var customerResult = await _mediator.Send(new GetAllCustomerQuery());
+            return customerResult.Match(
+                customers => Ok(customers),
+                errors => Problem(errors)
+                );
         }
 
         // GET api/<CustomersController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            return "value";
+            var customerResponse = await _mediator.Send(new GetByIdCustomerQuery(id));
+            return customerResponse.Match(
+                customer => Ok(customer),
+                errors => Problem(errors)
+                );
         }
 
         // POST api/<CustomersController>
@@ -45,14 +58,33 @@ namespace Web.API.Controllers
 
         // PUT api/<CustomersController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(Guid id, [FromBody] UpdateCustomerCommand updateCustomerCommand)
         {
+            if (updateCustomerCommand.Id != id)
+            {
+                List<Error> errors = new()
+                {
+                Error.Validation("Customer.UpdateInvalid", "The request Id does not match with the url Id.")
+                };
+                return Problem(errors);
+            }
+            var updateResult = await _mediator.Send(updateCustomerCommand);
+
+            return updateResult.Match(
+                success => Ok(),
+                errors => Problem(errors)
+                );
         }
 
         // DELETE api/<CustomersController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
+            var deleteResult = await _mediator.Send(new DeleteCustomerCommand(id));
+            return deleteResult.Match(
+                success => NoContent(),
+                errors => Problem(errors)
+                );
         }
     }
 }

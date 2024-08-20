@@ -20,43 +20,38 @@ namespace EasyPOS.Application.Customers.Create
 
         public async Task<ErrorOr<Unit>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
         {
-            try
+
+            if (PhoneNumber.Create(request.PhoneNumber) is not PhoneNumber phoneNumber)
             {
-                if (PhoneNumber.Create(request.PhoneNumber) is not PhoneNumber phoneNumber)
-                {
-                    return Error.Validation("Customer.PhoneNumber", "Phone Number is not valid format");
-                }
-
-                if (Address.Create(request.Country,
-                    request.Line1,
-                    request.Line2,
-                    request.City,
-                    request.State,
-                    request.zipCode) is not Address address)
-                {
-                    return Error.Validation("Customer.Address", "Address is not valid format");
-                }
-
-                var customer = new Customer(
-                    new CustomerId(Guid.NewGuid()),
-                    request.Name,
-                    request.LastName,
-                    request.Email,
-                    phoneNumber,
-                    address,
-                    true
-                    );
-
-                _customerRepository.Add(customer);
-
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
+                return Error.Validation("Customer.PhoneNumber", "Phone Number is not valid format");
             }
-            catch (Exception ex)
+
+            if (Address.Create(request.Country,
+                request.Line1,
+                request.Line2,
+                request.City,
+                request.State,
+                request.zipCode) is not Address address)
             {
-                return Error.Failure("CreateCustomer.Failure", ex.Message);
+                return Error.Validation("Customer.Address", "Address is not valid format");
             }
+
+            var customer = new Customer(
+                new CustomerId(Guid.NewGuid()),
+                request.Name,
+                request.LastName,
+                request.Email,
+                phoneNumber,
+                address,
+                true
+                );
+
+            _customerRepository.Add(customer);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
+
         }
     }
 }

@@ -18,11 +18,4 @@
     <ProjectReference Include="..\EasyPOS.Domain\EasyPOS.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Customers\Delete\" />
-    <Folder Include="Customers\GetAll\" />
-    <Folder Include="Customers\GetById\" />
-    <Folder Include="Customers\Update\" />
-  </ItemGroup>
-
 </Project>
